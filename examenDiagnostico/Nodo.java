@@ -5,9 +5,13 @@ public class Nodo {
 	private Nodo izquierdo;
 	private Nodo derecho;
 	
-	public Nodo(int nombre, Nodo izquierdo, Nodo derecho) {
+	public Nodo() {
+	}
+	
+	public Nodo(int nombre) {
 		this.nombre =  nombre;
-		this.padre = padre;
+		this.izquierdo = null;
+		this.derecho = null;
 	}
 
 	public int getNombre() {
@@ -18,17 +22,28 @@ public class Nodo {
 		this.nombre = nombre;
 	}
 
-	public int getPadre() {
-		return padre;
+	public Nodo getIzquierdo() {
+		return izquierdo;
 	}
 
-	public void setPadre(int padre) {
-		this.padre = padre;
+	public void setIzquierdo(Nodo izquierdo) {
+		this.izquierdo = izquierdo;
+	}
+
+	public Nodo getDerecho() {
+		return derecho;
+	}
+
+	public void setDerecho(Nodo derecho) {
+		this.derecho = derecho;
 	}
 
 	@Override
 	public String toString() {
-		return "Nodo [nombre=" + nombre + ", padre=" + padre + "]";
+		return "Nodo [nombre=" + nombre + "]";
 	}
 	
 }
+
+
+//Kevin Andres Tortoledo Rodriguez.
