@@ -5,24 +5,52 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Nodo {
-	public int[][] state;
-	public List<Nodo> childs;
+	private int[][] state;
+	public ArrayList<Nodo> childs;
+	Nodo father;
 	public boolean visited;
 	
 	public Nodo(int [][] p) {
 		this.state = p;
 		this.childs = new ArrayList<Nodo>();
 	}
+	
+	
+	public int[][] getState() {
+		return state;
+	}
+
+
+	public void setState(int[][] state) {
+		this.state = state;
+	}
+	
+	public ArrayList<Nodo> getChilds(){
+		return childs;
+	}
+	
+	public void setChilds(ArrayList<Nodo> childs){
+		this.childs = childs;
+		if(childs!=null) {
+			for(Nodo n : childs) 
+				n.father = this;
+		}
+	}
+	
+	public Nodo getFather() {
+		return father;
+	}
+
+	public void setFather(Nodo father) {
+		this.father = father;
+	}
+
 
 	@Override
 	public String toString() {
-		String cadena="";
-		for(int i=0; i<3; i++) {
-			cadena = "";
-			for(int j=0; j<3; j++) {
-				cadena = cadena + this.state[i][j] + "  \n" ;
-			}
-		}
-		return "Nodo: \n" + cadena;
+		return "Nodo [state=" + Arrays.toString(state) + ", childs=" + childs + ", father=" + father + ", visited="
+				+ visited + "]";
 	}
+
+	
 }

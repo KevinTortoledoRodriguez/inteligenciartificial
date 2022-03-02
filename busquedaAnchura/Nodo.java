@@ -12,7 +12,8 @@ public class Nodo {
 		this.dato = dato;
 		this.caminos = new ArrayList<Camino>();
 	}
-
+	
+	
 	@Override
 	public String toString() {
 		return "Nodo [dato=" + dato + ", caminos=" + caminos + ", visitado=" + visitado + "]";

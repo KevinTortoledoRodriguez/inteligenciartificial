@@ -2,129 +2,154 @@ package eightpuzzle;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 
 public class main {
-	int filas = 3, columnas = 3;
-	int [][] puzzle = new int[filas][columnas];
-	int [][] objetive = {{0,1,2},{3,4,5},{6,7,8}};
-	ArrayList <int[][]> states = new ArrayList<int[][]>();
+	Nodo puzzle;
+	int [][] objetive = {{1,2,3},{4,5,6},{7,8,0}};
+	ArrayList <Nodo> states = new ArrayList<Nodo>();
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		main m = new main();
-		ingresarDatos(m.puzzle, m.filas, m.columnas);
+		m.puzzle = new Nodo(ingresarDatos());
 		System.out.println("Puzzle desordenado");
-		imprimir(m.puzzle, m.filas, m.columnas);
-		int [][] solve = m.puzzle8(m.puzzle, m.states, m.filas, m.columnas);
+		imprimir(m.puzzle.getState());
+		Nodo solve = m.puzzle8(m.puzzle, m.states);
 		System.out.println("Puzzle ordenado");
-		imprimir(solve, m.filas, m.columnas);
+		imprimir(solve.getState());
+		
+		System.out.println("Nodos generados: ");
+		for(Nodo x: m.states) {
+			imprimir(x.getState());
+			System.out.println("");
+		}
 	}
 	
-	public static void imprimir(int[][]puzzle, int filas, int columnas) {
+	public static void imprimir(int[][]puzzle) {
 		String cadena;
-		for(int i=0; i<filas; i++) {
+		for(int i=0; i<3; i++) {
 			cadena = "";
-			for(int j=0; j<columnas; j++) {
+			for(int j=0; j<3; j++) {
 				cadena = cadena + puzzle[i][j] + "  ";
 			}
 			System.out.println(cadena);
 		}
 	}
 	
-	public static void ingresarDatos(int[][]puzzle, int filas, int columnas) {
+	public static int[][] ingresarDatos() {
 		Scanner s = new Scanner(System.in);
-		for(int i=0; i<filas; i++) {
-			for(int j=0; j<columnas; j++) {
+		int [][] p = new int[3][3]; 
+		for(int i=0; i<3; i++) {
+			for(int j=0; j<3; j++) {
 				System.out.println("Introduce un numero.");
-				puzzle[i][j]= s.nextInt();
+				p[i][j]= s.nextInt();
 			}
 		}
+		return p;
 	}
 	
-	private int[][] puzzle8 (int[][] puzzle, ArrayList<int[][]> states, int filas, int columnas) {
-		//states.add(puzzle);
-		Queue<int[][]> Q = new LinkedList<>();
+	private Nodo puzzle8 (Nodo puzzle, ArrayList <Nodo> states) {
+		Queue<Nodo> Q = new LinkedList<>();
+		puzzle.visited =true;
 		Q.add(puzzle);
 		while(Q.size() > 0) {
-			int [][] p = Q.remove();
+			Nodo p = Q.remove();
 			states.add(p);
-			if(isSolve(p, filas, columnas)) {
-				return puzzle;
+			if(isSolve(p.getState())) {
+				return p;
 			}
-			for(int i=0; i<filas; i++) {
-				for(int j=0; j<columnas; j++) {
-					if(p[i][j] == 0) {
-						if((i==0 && j==0) || (i==0 && j==2) || (i==2 && j==0) || (i==2 && j==2)) {
-							//Corner
-							if(i==0 && j==0) {
-								Q.add(rigth(p, i, j));
-								Q.add(down(p, i, j));
-								break;
-							}
-							if(i==0 && j==2) {
-								Q.add(left(p, i, j));
-								Q.add(down(p, i, j));
-								break;
-							}
-							if(i==2 && j==0) {
-								Q.add(rigth(p, i, j));
-								Q.add(up(p, i, j));
-								break;
-							}
-							if(i==2 && j==2) {
-								Q.add(left(p, i, j));
-								Q.add(up(p, i, j));
-								break;
-							}
-						}
-						if((i==0 && j==1) || (i==1 && j==0) || (i==1 && j==2) || (i==2 && j==1)) {
-							//Edge
-							if(i==0 && j==1) {
-								Q.add(rigth(p, i, j));
-								Q.add(left(p, i, j));
-								Q.add(down(p, i, j));
-								break;
-							}
-							if(i==1 && j==0) {
-								Q.add(rigth(p, i, j));
-								Q.add(down(p, i, j));
-								Q.add(up(p, i, j));
-								break;
-							}
-							if(i==1 && j==2) {
-								Q.add(left(p, i, j));
-								Q.add(up(p, i, j));
-								Q.add(down(p, i, j));
-								break;
-							}
-							if(i==2 && j==1) {
-								Q.add(left(p, i, j));
-								Q.add(up(p, i, j));
-								Q.add(rigth(p, i, j));
-								break;
-							}
-						}
-						if((i==1 && j==1)) {
-							//Center
-							Q.add(left(p, i, j));
-							Q.add(rigth(p, i, j));
-							Q.add(up(p, i, j));
-							Q.add(down(p, i, j));
-							break;
-						}
-					}
+			for(Nodo w: obtenerSucesores(p)) {
+				if(!w.visited) {
+					w.visited = true;
+					Q.add(w);
 				}
 			}
 		}
 		return null;
 	}
 	
-	boolean isSolve(int[][] p, int filas, int columnas) {
+	List<Nodo> obtenerSucesores(Nodo p) {
+		ArrayList<Nodo> nodos = new ArrayList<>();
+		for(int i=0; i<3; i++) {
+			for(int j=0; j<3; j++) {
+				if(p.getState()[i][j] == 0) {
+					/*if((i==0 && j==0) || (i==0 && j==2) || (i==2 && j==0) || (i==2 && j==2)) {
+						//Corner
+						if(i==0 && j==0) {
+							rigth(p, i, j);
+							down(p, i, j);
+							break;
+						}
+						if(i==0 && j==2) {
+							left(p, i, j);
+							down(p, i, j);
+							break;
+						}
+						if(i==2 && j==0) {
+							rigth(p, i, j);
+							up(p, i, j);
+							break;
+						}
+						if(i==2 && j==2) {
+							left(p, i, j);
+							up(p, i, j);
+							break;
+						}
+					}
+					if((i==0 && j==1) || (i==1 && j==0) || (i==1 && j==2) || (i==2 && j==1)) {
+						//Edge
+						if(i==0 && j==1) {
+							rigth(p, i, j);
+							left(p, i, j);
+							down(p, i, j);
+							break;
+						}
+						if(i==1 && j==0) {
+							rigth(p, i, j);
+							down(p, i, j);
+							up(p, i, j);
+							break;
+						}
+						if(i==1 && j==2) {
+							left(p, i, j);
+							up(p, i, j);
+							down(p, i, j);
+							break;
+						}
+						if(i==2 && j==1) {
+							left(p, i, j);
+							up(p, i, j);
+							rigth(p, i, j);
+							break;
+						}
+					}*/
+					if((i==1 && j==1)) {
+						//Center
+						Nodo hijo = new Nodo(clonar(p.getState()));
+						nodos.add(left(hijo, i, j));
+						hijo = new Nodo(clonar(p.getState()));
+						nodos.add(rigth(hijo, i, j));
+						hijo = new Nodo(clonar(p.getState()));
+						nodos.add(up(hijo, i, j));
+						hijo = new Nodo(clonar(p.getState()));
+						nodos.add(down(hijo, i, j));
+						
+						break;
+					}
+				}
+			}
+		}
+		p.setChilds(nodos);
+		return nodos;
+	}
+	
+	boolean isSolve(int[][] p) {
 		boolean equals = true;
-		for(int i=0; i<filas; i++) {
-			for(int j=0; j<columnas; j++) {
+		for(int i=0; i<3; i++) {
+			for(int j=0; j<3; j++) {
 				if(p[i][j] != objetive[i][j]) {
 					equals = false;
 					break;
@@ -138,36 +163,58 @@ public class main {
 		return false;
 	}
 	
-	public int[][] left(int[][]p, int x, int y) {
-		System.out.println("left");
-		p[x][y] = p[x][y-1];
-		p[x][y-1] = 0;
-		imprimir(p,3,3);
+	
+	public Nodo left(Nodo p, int x, int y) {
+		Nodo actualState = p;
+		System.out.println("Antes de izquierda");
+		imprimir(actualState.getState());
+		actualState.getState()[x][y] = actualState.getState()[x][y-1];
+		actualState.getState()[x][y-1] = 0;
+		System.out.println("Despues de izquierda");
+		imprimir(actualState.getState());
+		return actualState;
+	}
+	
+	public Nodo rigth(Nodo p, int x, int y) {
+		Nodo actualState = p;
+		System.out.println("Antes de derecha");
+		imprimir(actualState.getState());
+		actualState.getState()[x][y] = actualState.getState()[x][y+1];
+		actualState.getState()[x][y+1] = 0;
+		System.out.println("Despues de derecha");
+		imprimir(actualState.getState());
+		return actualState;
+	}
+	
+	public Nodo up(Nodo p, int x, int y) {
+		Nodo actualState = p;
+		System.out.println("Antes de arriba");
+		imprimir(actualState.getState());
+		actualState.getState()[x][y] = actualState.getState()[x-1][y];
+		actualState.getState()[x-1][y] = 0;
+		System.out.println("Despues de arriba");
+		imprimir(actualState.getState());
 		return p;
 	}
 	
-	public int[][] rigth(int[][]p, int x, int y) {
-		System.out.println("rigth");
-		p[x][y] = p[x][y+1];
-		p[x][y+1] = 0;
-		imprimir(p,3,3);
+	public Nodo down(Nodo p, int x, int y) {
+		Nodo actualState = p;
+		System.out.println("Antes de abajo");
+		imprimir(actualState.getState());
+		actualState.getState()[x][y] = actualState.getState()[x+1][y];
+		actualState.getState()[x+1][y] = 0;
+		System.out.println("Despues de abajo");
+		imprimir(actualState.getState());
 		return p;
 	}
 	
-	public int [][] up(int[][]p, int x, int y) {
-		System.out.println("up");
-		p[x][y] = p[x+1][y];
-		p[x+1][y] = 0;
-		imprimir(p,3,3);
-		return p;
+	public int[][] clonar(int[][] estado) {
+		int[][] clon = new int[estado.length][estado.length]; 
+		for(int i  = 0 ; i < estado.length ; i++) {
+			for(int j  = 0 ; j < estado.length ; j++) {
+				clon[i][j] = estado[i][j];
+			}
+		}
+		return clon;
 	}
-	
-	public int [][] down(int[][]p, int x, int y) {
-		System.out.println("down");
-		p[x][y] = p[x-1][y];
-		p[x-1][y] = 0;
-		imprimir(p,3,3);
-		return p;
-	}
-	
 }
