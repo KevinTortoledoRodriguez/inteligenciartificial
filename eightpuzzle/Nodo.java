@@ -1,8 +1,9 @@
+package eightpuzzle;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-public class Nodo {
+public class Nodo implements Comparable<int [][]>{
 	private int[][] state;
 	public ArrayList<Nodo> childs;
 	Nodo father;
@@ -48,6 +49,20 @@ public class Nodo {
 	public String toString() {
 		return "Nodo [state=" + Arrays.toString(state) + ", childs=" + childs + ", father=" + father + ", visited="
 				+ visited + "]";
+	}
+
+
+	@Override
+	public int compareTo(int [][] o) {
+		boolean igual = true;
+		for(int i=0; i<3; i++) {
+			for(int j=0; j<3; j++) {
+				if(this.state[i][j] != o[i][j]) {
+					igual = false;
+				}
+			}
+		}
+		return igual ? 1 : 0;
 	}
 
 	

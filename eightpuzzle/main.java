@@ -1,3 +1,5 @@
+package eightpuzzle;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,11 +19,11 @@ public class main {
 		imprimir(m.puzzle.getState());
 		Nodo solve = m.puzzle8(m.puzzle, m.states);
 		System.out.println("Nodos generados: ");
-		for(Nodo x: m.states) {
+		/*for(Nodo x: m.states) {
 			imprimir(x.getState());
 			System.out.println("");
-		}
-		System.out.println("Tamaño de la lista de estados generados: " + m.states.size());
+		}*/
+		System.out.println("Tamano de la lista de estados generados: " + m.states.size());
 	}
 	
 	public static void imprimir(int[][]puzzle) {
@@ -52,15 +54,19 @@ public class main {
 		Q.add(puzzle);
 		while(Q.size() > 0) {
 			Nodo p = Q.remove();
+			System.out.println("Nodo a evaluar: ");
+			imprimir(p.getState());
 			states.add(p);
-			if(isSolve(p.getState())) {
+			if(isSolve(p)) {
 				return p;
 			}
 			p.visited=true;
 			for(Nodo w: obtenerSucesores(p, states)) {
 				if(!w.visited) {
-					w.visited = true;
-					Q.add(w);
+					if(!buscarHijos(states, w)) {
+						w.visited = true;
+						Q.add(w);
+					}
 				}
 			}
 		}
@@ -76,34 +82,27 @@ public class main {
 					if((i==0 && j==0) || (i==0 && j==2) || (i==2 && j==0) || (i==2 && j==2)) {
 						//Corner
 						if(i==0 && j==0) {
-							rigth(hijo, i, j);
-							// if(!buscarHijos(states, hijo)){
-							// 	nodos.add(hijo);
-							// };
+							nodos.add(rigth(hijo, i, j));
 							hijo = new Nodo(clonar(p.getState()));
 							nodos.add(down(hijo, i, j));
-							hijo = new Nodo(clonar(p.getState()));
 							break;
 						}
 						if(i==0 && j==2) {
 							nodos.add(left(hijo, i, j));
 							hijo = new Nodo(clonar(p.getState()));
 							nodos.add(down(hijo, i, j));
-							hijo = new Nodo(clonar(p.getState()));
 							break;
 						}
 						if(i==2 && j==0) {
 							nodos.add(rigth(hijo, i, j));
 							hijo = new Nodo(clonar(p.getState()));
 							nodos.add(up(hijo, i, j));
-							hijo = new Nodo(clonar(p.getState()));
 							break;
 						}
 						if(i==2 && j==2) {
 							nodos.add(left(hijo, i, j));
 							hijo = new Nodo(clonar(p.getState()));
 							nodos.add(up(hijo, i, j));
-							hijo = new Nodo(clonar(p.getState()));
 							break;
 						}
 					}
@@ -115,7 +114,6 @@ public class main {
 							nodos.add(left(hijo, i, j));
 							hijo = new Nodo(clonar(p.getState()));
 							nodos.add(down(hijo, i, j));
-							hijo = new Nodo(clonar(p.getState()));
 							break;
 						}
 						if(i==1 && j==0) {
@@ -124,7 +122,6 @@ public class main {
 							nodos.add(down(hijo, i, j));
 							hijo = new Nodo(clonar(p.getState()));
 							nodos.add(up(hijo, i, j));
-							hijo = new Nodo(clonar(p.getState()));
 							break;
 						}
 						if(i==1 && j==2) {
@@ -133,7 +130,6 @@ public class main {
 							nodos.add(up(hijo, i, j));
 							hijo = new Nodo(clonar(p.getState()));
 							nodos.add(down(hijo, i, j));
-							hijo = new Nodo(clonar(p.getState()));
 							break;
 						}
 						if(i==2 && j==1) {
@@ -142,7 +138,6 @@ public class main {
 							nodos.add(up(hijo, i, j));
 							hijo = new Nodo(clonar(p.getState()));
 							nodos.add(rigth(hijo, i, j));
-							hijo = new Nodo(clonar(p.getState()));
 							break;
 						}
 					}
@@ -155,33 +150,21 @@ public class main {
 						nodos.add(up(hijo, i, j));
 						hijo = new Nodo(clonar(p.getState()));
 						nodos.add(down(hijo, i, j));
-						
 						break;
 					}
 				}
 			}
 		}
-		p.setChilds(nodos);
+		//p.setChilds(nodos);
 		return nodos;
 	}
 	
-	boolean isSolve(int[][] p) {
-		boolean equals = true;
-		for(int i=0; i<3; i++) {
-			for(int j=0; j<3; j++) {
-				if(p[i][j] != objetive[i][j]) {
-					equals = false;
-					break;
-				}
-			}
-		}
-		if(equals){
+	boolean isSolve(Nodo p) {
+		if(p.compareTo(this.objetive) == 1){
 			return true;
 		}
 		return false;
 	}
-	
-
 	
 	public Nodo left(Nodo p, int x, int y) {
 		Nodo actualState = p;
@@ -222,18 +205,11 @@ public class main {
 	}
 
 	public boolean buscarHijos(ArrayList<Nodo>states, Nodo hijo) {
-		boolean exists = false;
 		for (Nodo nodo : states) {
-			boolean x = false;
-			for(int i=0; i<3; i++) {
-				if(x)
-				for(int j=0; j<3; j++) {
-					if(nodo.getState()[i][j] != hijo.getState()[i][j]) {
-						break;
-					}
-				}
+			if(nodo.compareTo(this.objetive) == 1) {
+				return true;
 			}
 		}
-		return exists;
+		return false;
 	}
 }
