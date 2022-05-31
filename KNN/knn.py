@@ -129,3 +129,8 @@ test_preds_grid = bagging_model.predict(X_test)
 test_mse = mean_squared_error(y_test, test_preds_grid)
 test_rmse = sqrt(test_mse)
 test_rmse
+
+
+#colab donde compile el codigo: https://colab.research.google.com/drive/125HBUa9FiieVXfhkf8wpcPqSDtt1JCCu?authuser=2#scrollTo=11V0FQbEjwq_
+
+#colab de ejemplo en base a la pagina de knn: https://colab.research.google.com/drive/1q_5r7nj-OATZmDfGepv2x-c5gPQYd0_E?authuser=2#scrollTo=0kljRg2XfGBL
